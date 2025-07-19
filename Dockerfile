@@ -16,4 +16,4 @@ EXPOSE 8501
 
 # Command to run the Streamlit app
 # The --server.port and --server.enableCORS flags are important for Cloud Run
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.enableCORS=true", "--server.enableXsrfProtection=false"]
+CMD ["streamlit", "run", "app.py", "--server.port", "$PORT", "--server.address", "0.0.0.0", "--server.enableCORS", "true", "--server.enableXsrfProtection", "false"]
