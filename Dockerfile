@@ -11,9 +11,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the Streamlit app code
 COPY . .
 
-# Expose the port Streamlit runs on (default is 8501)
-EXPOSE 8501
+# Expose port 8080 (Cloud Run requirement)
+EXPOSE 8080
 
-# Command to run the Streamlit app
-# The --server.port and --server.enableCORS flags are important for Cloud Run
-CMD ["streamlit", "run", "app.py", "--server.port", "$PORT", "--server.address", "0.0.0.0", "--server.enableCORS", "true", "--server.enableXsrfProtection", "false"]
+# Configure Streamlit to run headless on 0.0.0.0:8080
+ENV STREAMLIT_SERVER_HEADLESS=true \
+    STREAMLIT_SERVER_PORT=8080 \
+    STREAMLIT_SERVER_ENABLECORS=false
+
+# Launch the Streamlit app
+CMD ["streamlit", "run", "main.py", "--server.port=8080", "--server.address=0.0.0.0"]
