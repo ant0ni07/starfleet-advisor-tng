@@ -1,6 +1,8 @@
 # Starfleet Advisor (TNG Edition) 🚀
 
-A **multi-agent conversational AI application** that provides Starfleet-themed advice from the crew of the USS Enterprise-D. Users can ask questions on various topics, and the system intelligently routes their query to the most appropriate TNG officer (Captain Picard, Commander Data, Counselor Troi, Commander Riker, or Lt. Commander Geordi La Forge) for a personalized response. The app also includes conversational memory and a custom farewell system.
+A **multi-agent conversational AI application** that provides Starfleet-themed advice from the crew of the USS Enterprise-D. 
+Users can ask questions on various topics, and the system intelligently routes their query to the most appropriate TNG officer (Captain Picard, Commander Data, Counselor Troi, Commander Riker, or Lt. Commander Geordi La Forge) for a personalized response. 
+The app also includes conversational memory and a custom farewell system.
 
 ---
 
@@ -13,7 +15,7 @@ A **multi-agent conversational AI application** that provides Starfleet-themed a
 * **Conversational Memory:** Characters remember previous turns in the conversation for a more coherent dialogue.
 * **Thematic Farewell:** Detects "goodbye" intent and responds with a Star Trek-themed closing message.
 * **Streamlit UI:** Interactive and user-friendly web interface.
-* **Powered by Google Gemini 1.5 Flash:** Utilizes a powerful, fast, and cost-effective LLM.
+* **Powered by Google Gemini 2.0 Flash:** Utilizes a powerful, fast, and cost-effective LLM.
 
 ---
 
