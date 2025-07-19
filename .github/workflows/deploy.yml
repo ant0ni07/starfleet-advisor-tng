@@ -1,0 +1,64 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main # This workflow runs when changes are pushed to the 'main' branch
+
+env:
+  PROJECT_ID: chodemo # IMPORTANT: Replace with your actual Google Cloud Project ID
+  SERVICE_NAME: starfleet-advisor-tng # The name of your Cloud Run service
+  REGION: us-central1 # The Google Cloud region where you want to deploy (e.g., us-central1, europe-west1)
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest # The type of runner that the job will execute on
+    permissions:
+      contents: 'read' # Allow checkout action to read repository content
+      id-token: 'write' # Required for google-github-actions/auth@v2
+
+    steps:
+      - name: Checkout repository # Step to get your code from GitHub
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud # Authenticates GitHub Actions with your GCP service account
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }} # Uses the JSON key from your GitHub Secret
+
+      - name: Set up Google Cloud SDK # Installs and configures gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+
+      - name: Build and push Docker image to Artifact Registry # Builds your Docker image and pushes it to GCP
+        run: |-
+          # Configure Docker to use gcloud as a credential helper for Artifact Registry
+          gcloud auth configure-docker
+
+          # Build the Docker image using your Dockerfile
+          docker build -t gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }} .
+
+          # Push the built image to Google Container Registry (GCR) or Artifact Registry
+          docker push gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}
+
+      - name: Deploy to Cloud Run # Deploys the Docker image to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ env.SERVICE_NAME }}
+          image: gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}
+          region: ${{ env.REGION }}
+          allow-unauthenticated: true # Set to 'true' for public access, 'false' for private
+          env_vars: |- # Pass your API keys as environment variables to the running app
+            GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}
+            LANGCHAIN_TRACING_V2=true
+            LANGCHAIN_API_KEY=${{ secrets.LANGSMITH_API_KEY }}
+            LANGCHAIN_PROJECT=${{ env.SERVICE_NAME }}
+
+      - name: Show Cloud Run service URL # Optional: Displays the URL of your deployed app
+        run: |-
+          gcloud run services describe ${{ env.SERVICE_NAME }} \
+            --platform managed \
+            --region ${{ env.REGION }} \
+            --format="value(status.url)"
