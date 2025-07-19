@@ -99,7 +99,7 @@ Contributions are welcome! If you have suggestions for new features, bug fixes, 
 This project is open-source and available under the MIT License.
 
 ### Acknowledgements 🙏
-* Built with Google Gemini 1.5 Flash.
+* Built with Google Gemini 2.0 Flash.
 
 * Powered by LangChain and LangGraph.
 
