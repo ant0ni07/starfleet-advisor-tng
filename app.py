@@ -32,8 +32,8 @@ if not GOOGLE_API_KEY:
 #     st.error("Google API Key not found. Please set GOOGLE_API_KEY in your .env file.")
 #     st.stop()
 
-llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.0)
-llm_classifier = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.1) # Slightly more creative for classification
+llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.0, google_api_key=GOOGLE_API_KEY)
+llm_classifier = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.1, google_api_key=GOOGLE_API_KEY) # Slightly more creative for classification
 
 # --- TNG Character Personas and Prompts ---
 TNG_PERSONAS = {
