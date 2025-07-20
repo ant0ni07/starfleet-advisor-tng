@@ -35,13 +35,15 @@ steps:
   - '--platform'
   - 'managed'
   - '--allow-unauthenticated'
-  - '--set-env-vars'
-  - |
-    GOOGLE_API_KEY=$$GOOGLE_API_KEY,
-    LANGCHAIN_TRACING_V2=true,
-    LANGCHAIN_API_KEY=$$LANGSMITH_API_KEY,
-    LANGCHAIN_PROJECT=${_SERVICE_NAME}
-  secretEnv: ['GOOGLE_API_KEY', 'LANGSMITH_API_KEY']
+  # --- CRITICAL FIX FOR ENVIRONMENT VARIABLES ---
+  # Each environment variable should be a separate item in the list after --set-env-vars.
+  # This avoids potential issues with multiline string parsing.
+  - '--set-env-vars=GOOGLE_API_KEY=$$GOOGLE_API_KEY'
+  - '--set-env-vars=LANGCHAIN_TRACING_V2=true'
+  - '--set-env-vars=LANGCHAIN_API_KEY=$$LANGSMITH_API_KEY'
+  - '--set-env-vars=LANGCHAIN_PROJECT=${_SERVICE_NAME}'
+  # --- END CRITICAL FIX ---
+  secretEnv: ['GOOGLE_API_KEY', 'LANGSMITH_API_KEY'] # This correctly masks the variables in Cloud Build logs
 
 # Specifies the Docker images that are created by this build and should be stored.
 images:
