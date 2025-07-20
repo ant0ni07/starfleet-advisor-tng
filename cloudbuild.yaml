@@ -3,19 +3,7 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/${PROJECT_ID}/${_SERVICE_NAME}', '.']
 
-# --- TEMPORARY DEBUG STEP ---
-# This step will print the length of your API key.
-# If it's 0, or the step fails, the secret isn't being fetched correctly by Cloud Build.
-# We use `bash -c` to ensure environment variables are properly evaluated.
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  entrypoint: bash
-  args:
-  - '-c'
-  - |
-    echo "Debugging Secret Manager access during build:"
-    echo "GOOGLE_API_KEY length: ${#GOOGLE_API_KEY}" # Prints length, not the key itself
-    echo "LANGSMITH_API_KEY length: ${#LANGSMITH_API_KEY}" # Prints length
-  secretEnv: ['GOOGLE_API_KEY', 'LANGSMITH_API_KEY'] # Necessary so these are available in this step
+# --- REMOVE ANY TEMPORARY DEBUG STEP FROM CLOUDBUILD.YAML NOW ---
 
 # Step 2: Push the Docker image to Google Artifact Registry
 - name: 'gcr.io/cloud-builders/docker'
@@ -35,15 +23,13 @@ steps:
   - '--platform'
   - 'managed'
   - '--allow-unauthenticated'
-  # --- CRITICAL FIX FOR ENVIRONMENT VARIABLES ---
-  # Each environment variable should be a separate item in the list after --set-env-vars.
-  # This avoids potential issues with multiline string parsing.
+  # --- CRITICAL FIX FOR ENVIRONMENT VARIABLES (Each on its own line, with its own --set-env-vars flag) ---
   - '--set-env-vars=GOOGLE_API_KEY=$$GOOGLE_API_KEY'
   - '--set-env-vars=LANGCHAIN_TRACING_V2=true'
   - '--set-env-vars=LANGCHAIN_API_KEY=$$LANGSMITH_API_KEY'
   - '--set-env-vars=LANGCHAIN_PROJECT=${_SERVICE_NAME}'
   # --- END CRITICAL FIX ---
-  secretEnv: ['GOOGLE_API_KEY', 'LANGSMITH_API_KEY'] # This correctly masks the variables in Cloud Build logs
+  secretEnv: ['GOOGLE_API_KEY', 'LANGSMITH_API_KEY'] # Necessary for Cloud Build to mask in its logs
 
 # Specifies the Docker images that are created by this build and should be stored.
 images:
