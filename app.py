@@ -19,7 +19,15 @@ from langchain_core.messages import BaseMessage, HumanMessage, AIMessage
 # Make sure your Streamlit app expects them directly from os.environ.
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 LANGSMITH_API_KEY = os.environ.get("LANGSMITH_API_KEY") # If you're using LangSmith
-
+# --- TEMPORARY DEBUG CODE ---
+st.header("Debugging Environment Variables")
+st.write("Listing all environment variables detected in the container:")
+for key, value in os.environ.items():
+    if "KEY" in key.upper() or "SECRET" in key.upper(): # Only print sensitive names, not actual values
+        st.write(f"- {key}: ***** (masked)") # Mask sensitive values for security
+    else:
+        st.write(f"- {key}: {value}")
+st.write("--- End Debugging ---")
 if not GOOGLE_API_KEY:
     st.error("Google API Key not found. Please ensure it's set in Cloud Run environment variables.")
     st.stop() # Stop the Streamlit app if the key is missing
