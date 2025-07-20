@@ -14,15 +14,23 @@ from pydantic import BaseModel, Field
 
 # Imports for conversational memory messages
 from langchain_core.messages import BaseMessage, HumanMessage, AIMessage
+# --- Retrieve API Keys from Environment Variables ---
+# Cloud Run injects these directly into the container's environment.
+# Make sure your Streamlit app expects them directly from os.environ.
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
+LANGSMITH_API_KEY = os.environ.get("LANGSMITH_API_KEY") # If you're using LangSmith
 
+if not GOOGLE_API_KEY:
+    st.error("Google API Key not found. Please ensure it's set in Cloud Run environment variables.")
+    st.stop() # Stop the Streamlit app if the key is missing
 # Load environment variables (for GOOGLE_API_KEY)
-load_dotenv()
+# load_dotenv()
 
-# --- Configure Gemini API ---
-api_key = os.getenv("GOOGLE_API_KEY")
-if not api_key:
-    st.error("Google API Key not found. Please set GOOGLE_API_KEY in your .env file.")
-    st.stop()
+# # --- Configure Gemini API ---
+# api_key = os.getenv("GOOGLE_API_KEY")
+# if not api_key:
+#     st.error("Google API Key not found. Please set GOOGLE_API_KEY in your .env file.")
+#     st.stop()
 
 llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.0)
 llm_classifier = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.1) # Slightly more creative for classification
