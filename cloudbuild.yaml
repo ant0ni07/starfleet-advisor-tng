@@ -3,28 +3,32 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/${PROJECT_ID}/${_SERVICE_NAME}', '.']
 
-  # Step 2: Push the Docker image to Artifact Registry
+  # Step 2: Push the Docker image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/${PROJECT_ID}/${_SERVICE_NAME}']
 
   # Step 3: Deploy the image to Cloud Run with secrets injected at runtime
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:465.0.0-slim'  # ✅ Pinned to working version
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:latest'
     entrypoint: gcloud
     args:
       - run
       - deploy
       - '${_SERVICE_NAME}'
-      - '--image'
-      - 'gcr.io/${PROJECT_ID}/${_SERVICE_NAME}'
-      - '--region'
-      - '${_REGION}'
-      - '--platform'
-      - managed
+      - '--image=gcr.io/${PROJECT_ID}/${_SERVICE_NAME}'
+      - '--region=${_REGION}'
+      - '--platform=managed'
       - '--allow-unauthenticated'
       - '--set-env-vars=LANGCHAIN_TRACING_V2=true,LANGCHAIN_PROJECT=${_SERVICE_NAME}'
-      - '--set-secrets=GOOGLE_API_KEY=google-api-key:latest,LANGSMITH_API_KEY=langsmith-api-key:latest'
+      - '--update-secrets=GOOGLE_API_KEY=google-api-key:latest,LANGSMITH_API_KEY=langsmith-api-key:latest'
+      - '--service-account=${_SERVICE_ACCOUNT}'  # Add service account
+      - '--port=8080'  # Specify port if needed
+      - '--memory=1Gi'  # Specify memory allocation
+      - '--cpu=1'      # Specify CPU allocation
+      - '--timeout=300s'  # Set request timeout
+      - '--concurrency=80'  # Set max concurrent requests
+      - '--max-instances=10'  # Set scaling limits
 
-# Optional: store image reference
+# Store image reference for future use
 images:
   - 'gcr.io/${PROJECT_ID}/${_SERVICE_NAME}'
 
@@ -32,4 +36,5 @@ images:
 substitutions:
   _SERVICE_NAME: starfleet-advisor-tng
   _REGION: us-central1
+  _SERVICE_ACCOUNT: your-service-account@${PROJECT_ID}.iam.gserviceaccount.com
 
