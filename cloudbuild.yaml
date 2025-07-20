@@ -21,8 +21,8 @@ steps:
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
-      - '--set-env-vars=GOOGLE_API_KEY=$$GOOGLE_API_KEY,LANGCHAIN_TRACING_V2=true,LANGCHAIN_API_KEY=$$LANGSMITH_API_KEY,LANGCHAIN_PROJECT=${_SERVICE_NAME}'
-    secretEnv: ['GOOGLE_API_KEY', 'LANGSMITH_API_KEY']
+      - '--set-secrets=GOOGLE_API_KEY=google-api-key:latest,LANGSMITH_API_KEY=langsmith-api-key:latest'
+      - '--set-env-vars=LANGCHAIN_TRACING_V2=true,LANGCHAIN_PROJECT=${_SERVICE_NAME}'
 
 images:
   - 'gcr.io/${PROJECT_ID}/${_SERVICE_NAME}'
