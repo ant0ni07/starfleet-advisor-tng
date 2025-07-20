@@ -22,15 +22,15 @@ LANGSMITH_API_KEY = os.environ.get("LANGSMITH_API_KEY") # If you're using LangSm
 print("GOOGLE_API_KEY:", os.getenv("GOOGLE_API_KEY"))
 
 
-# --- TEMPORARY DEBUG CODE ---
-st.header("Debugging Environment Variables")
-st.write("Listing all environment variables detected in the container:")
-for key, value in os.environ.items():
-    if "KEY" in key.upper() or "SECRET" in key.upper(): # Only print sensitive names, not actual values
-        st.write(f"- {key}: ***** (masked)") # Mask sensitive values for security
-    else:
-        st.write(f"- {key}: {value}")
-st.write("--- End Debugging ---")
+# # --- TEMPORARY DEBUG CODE ---
+# st.header("Debugging Environment Variables")
+# st.write("Listing all environment variables detected in the container:")
+# for key, value in os.environ.items():
+#     if "KEY" in key.upper() or "SECRET" in key.upper(): # Only print sensitive names, not actual values
+#         st.write(f"- {key}: ***** (masked)") # Mask sensitive values for security
+#     else:
+#         st.write(f"- {key}: {value}")
+# st.write("--- End Debugging ---")
 if not GOOGLE_API_KEY:
     st.error("Google API Key not found. Please do ensure it's set in Cloud Run environment variables.")
     st.stop() # Stop the Streamlit app if the key is missing
